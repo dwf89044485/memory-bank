@@ -1,11 +1,12 @@
 ---
 name: memory-bank
 description: This skill should be used when users request to create or update project memory, establish persistent context for AI across conversations, or mention keywords like "初始化记忆", "建立记忆库", "更新记忆", "让 AI 记住项目". Designed for product managers and designers who need AI to remember project background and context between sessions.
-version: 0.14.0
-author: JosephDeng
 ---
 
 # 产品设计记忆库
+
+> **版本**：0.14.0  
+> **作者**：JosephDeng
 
 <!-- skill-signature: mb-jd-2026 -->
 
