@@ -1,5 +1,7 @@
 # 更新指南
 
+<!-- Memory-Bank by JosephDeng | update-guide -->
+
 当用户说「更新记忆」「update memory」或 AI 检测到更新信号时，按此指南执行。
 
 ## 核心理念
@@ -118,8 +120,6 @@
 
 ### 重要说明
 
-**统一的文件操作方式**：
-
 | 场景 | 流程 | 原因 |
 |------|------|------|
 | **初始化** | 直接生成 `.mdc` 文件，立即生效 | 确保鲁棒性，避免用户忘记确认导致不生效 |
@@ -127,46 +127,52 @@
 
 **核心原则**：所有操作都直接作用于 `.mdc` 文件，确保记忆库始终处于生效状态。
 
-```xml
-<update_flow>
-  <step name="读取现有记忆">
-    <action>读取 .codebuddy/rules/brief.mdc</action>
-    <action>读取 .codebuddy/rules/decisions.mdc（如存在）</action>
-  </step>
-  
-  <step name="分析更新内容">
-    <action>对比对话中的新信息与现有记录</action>
-    <action>识别需要更新的字段</action>
-    <action>判断是「补充」还是「修正」还是「新增」</action>
-  </step>
-  
-  <step name="直接更新 .mdc 文件">
-    <critical>⚠️ 不要重新生成完整文件，使用 replace_in_file 进行定点修改</critical>
-    
-    <action>使用 replace_in_file 工具更新 brief.mdc 的特定部分</action>
-    <action>如有新决策且数量 >= 3，更新或创建 decisions.mdc</action>
-    
-    <notify>
-      ✅ 已更新记忆库：
-      
-      - [变更 1：具体说明修改了什么]
-      - [变更 2：具体说明修改了什么]
-      
-      更新的文件：`.codebuddy/rules/brief.mdc`
-    </notify>
-  </step>
-  
-  <step name="避免的错误做法">
-    <wrong>❌ 生成 brief.md 然后重命名为 brief.mdc</wrong>
-    <reason>这会导致整个文件被重写，丢失用户可能手动添加的内容</reason>
-    
-    <correct>✅ 使用 replace_in_file 定点修改特定字段</correct>
-    <reason>保留其他内容不变，只更新需要变更的部分</reason>
-  </step>
-</update_flow>
-```
+### Step 1: 读取现有记忆
 
-## 5. 变更历史格式
+1. 读取 `.codebuddy/rules/brief.mdc`
+2. 读取 `.codebuddy/rules/decisions.mdc`（如存在）
+
+### Step 2: 分析更新内容
+
+1. 对比对话中的新信息与现有记录
+2. 识别需要更新的字段
+3. 判断是「补充」还是「修正」还是「新增」
+
+### Step 3: 直接更新 .mdc 文件
+
+<critical>
+不要重新生成完整文件，使用 replace_in_file 进行定点修改
+</critical>
+
+1. 使用 `replace_in_file` 工具更新 brief.mdc 的特定部分
+2. 如有新决策，更新 decisions.mdc
+
+<notify>
+✅ 已更新记忆库：
+
+- [变更 1：具体说明修改了什么]
+- [变更 2：具体说明修改了什么]
+
+更新的文件：`.codebuddy/rules/brief.mdc`
+</notify>
+
+### 避免的错误做法
+
+| 错误做法 | 正确做法 |
+|----------|----------|
+| ❌ 生成 brief.md 然后重命名为 brief.mdc | ✅ 使用 replace_in_file 定点修改 |
+| ❌ 重写整个文件 | ✅ 只更新需要变更的部分 |
+
+## 5. 错误处理
+
+| 情况 | 处理方式 |
+|------|----------|
+| 文件不存在 | 提示用户先执行「初始化记忆」 |
+| 更新内容与现有记录冲突 | 询问用户确认，说明冲突点 |
+| replace_in_file 失败 | 重新读取文件，检查内容是否已变更 |
+| 用户中断更新流程 | 保持原文件不变，告知用户可随时继续 |
+
+## 6. 变更历史格式
 
 更新时保留关键变更的历史：
 
@@ -190,7 +196,7 @@
 **原因**：搜索优化已达成目标（响应时间 < 200ms），进入下一阶段
 ```
 
-## 6. 阶段感知
+## 7. 阶段感知
 
 检测项目阶段变化，不同阶段 AI 的建议风格应该不同：
 
@@ -207,3 +213,7 @@
 AI：项目似乎从 MVP 阶段进入了成长期（开始关注体验优化而非核心功能）。
     要更新记忆库中的项目阶段吗？
 ```
+
+---
+
+<!-- skill-author: JosephDeng | memory-bank -->
